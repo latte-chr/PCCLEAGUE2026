@@ -239,7 +239,14 @@ const db = firebase.firestore();
 
 let data = { players: [], games: [] };
 let currentTab = 'total';
-let historySort = { key: 'date', dir: 'desc' };
+//let historySort = { key: 'date', dir: 'desc' };
+// ソート優先順位リスト。先頭ほど優先度が高い
+// 各要素: { key: 'date'|'table'|'round', dir: 'asc'|'desc' }
+let historySortKeys = [
+  { key: 'date', dir: 'desc' },
+  { key: 'table', dir: 'asc' },
+  { key: 'round', dir: 'asc' }
+];
 let unsubscribeGames = null;
 let unsubscribePlayers = null;
 let currentRole = null; // 'admin' or 'viewer'
@@ -513,7 +520,7 @@ function buildRankingTable(stats) {
       <thead>
         <tr>
           <th>順位</th><th>プレイヤー</th><th>対局数</th>
-          <th>総合ポイント</th><th>平均順位</th>
+          <th>合計</th><th>平均着順</th>
           <th>1位</th><th>2位</th><th>3位</th><th>4位</th>
         </tr>
       </thead>
@@ -579,28 +586,63 @@ function clearPeriod() {
   renderPeriod();
 }
 
+// ヘッダークリック時の挙動:
+// - そのキーが先頭なら昇降を切替
+// - そのキーが含まれるが先頭でないなら、先頭に持ってくる(方向は維持)
+// - 含まれないなら先頭に追加(デフォルト方向で)
 function sortHistory(key) {
-  if (historySort.key === key) historySort.dir = historySort.dir === 'asc' ? 'desc' : 'asc';
-  else { historySort.key = key; historySort.dir = key === 'date' ? 'desc' : 'asc'; }
+  const idx = historySortKeys.findIndex(s => s.key === key);
+  if (idx === 0) {
+    historySortKeys[0].dir = historySortKeys[0].dir === 'asc' ? 'desc' : 'asc';
+  } else if (idx > 0) {
+    const item = historySortKeys.splice(idx, 1)[0];
+    historySortKeys.unshift(item);
+  } else {
+    const defaultDir = key === 'date' ? 'desc' : 'asc';
+    historySortKeys.unshift({ key, dir: defaultDir });
+  }
   renderHistory();
 }
 
 function renderHistory() {
   const gh = document.getElementById('gameHistory');
   if (data.games.length === 0) { gh.innerHTML = '<div class="empty">対局履歴がありません</div>'; return; }
+
+  // 複合ソート: 優先順位リストに従って順番に比較
   const sorted = [...data.games].sort((a, b) => {
-    const k = historySort.key;
-    let av, bv;
-    if (k === 'date') { av = a.date || ''; bv = b.date || ''; }
-    else if (k === 'table') { av = a.table || ''; bv = b.table || ''; }
-    else if (k === 'round') { av = a.round || 0; bv = b.round || 0; }
-    let cmp = (typeof av === 'number') ? av - bv : av.localeCompare(bv);
-    return historySort.dir === 'asc' ? cmp : -cmp;
+    for (const s of historySortKeys) {
+      let av, bv;
+      if (s.key === 'date') { av = a.date || ''; bv = b.date || ''; }
+      else if (s.key === 'table') { av = a.table || ''; bv = b.table || ''; }
+      else if (s.key === 'round') { av = a.round || 0; bv = b.round || 0; }
+      let cmp = (typeof av === 'number') ? av - bv : av.localeCompare(bv);
+      if (cmp !== 0) return s.dir === 'asc' ? cmp : -cmp;
+    }
+    return 0;
   });
-  const arrow = (k) => historySort.key !== k ? '<span class="sort-icon">⇅</span>' : `<span class="sort-icon">${historySort.dir === 'asc' ? '▲' : '▼'}</span>`;
-  const ac = (k) => historySort.key === k ? 'sortable active' : 'sortable';
+
+  // ヘッダー表示用ヘルパー
+  const sortInfo = (key) => {
+    const idx = historySortKeys.findIndex(s => s.key === key);
+    if (idx < 0) return { active: false, dir: null, order: null };
+    return { active: true, dir: historySortKeys[idx].dir, order: idx + 1 };
+  };
+  const arrow = (key) => {
+    const info = sortInfo(key);
+    if (!info.active) return '<span class="sort-icon">⇅</span>';
+    const dirArrow = info.dir === 'asc' ? '▲' : '▼';
+    // 優先順位が2以上なら数字で示す
+    const orderLabel = historySortKeys.length > 1 ? `<sub style="font-size:9px">${info.order}</sub>` : '';
+    return `<span class="sort-icon">${dirArrow}${orderLabel}</span>`;
+  };
+  const ac = (key) => sortInfo(key).active ? 'sortable active' : 'sortable';
   const showDelete = currentRole === 'admin';
+
   gh.innerHTML = `
+    <div class="row" style="font-size:12px; color:#718096; margin-bottom:8px;">
+      ヘッダーをクリックしてソート(複合キー対応)。優先順位の数字は左下に表示されます。
+      <button class="small secondary" onclick="resetHistorySort()">並び順をリセット</button>
+    </div>
     <table>
       <thead>
         <tr>
@@ -630,6 +672,16 @@ function renderHistory() {
     </table>
   `;
 }
+
+function resetHistorySort() {
+  historySortKeys = [
+    { key: 'date', dir: 'desc' },
+    { key: 'table', dir: 'asc' },
+    { key: 'round', dir: 'asc' }
+  ];
+  renderHistory();
+}
+
 
 function render() {
   document.getElementById('playerCount').textContent = data.players.length + '人';
