@@ -696,7 +696,7 @@ function renderHistory() {
             ${byRank.map(r => `
               <td class="history-cell">
                 <span class="player-name">${escapeHtml(r.player)}</span>
-                <span class="score-line">${formatScore(r.score)}点</span>
+                <span class="score-line">${formatScore(r.score)}</span>
                 <span class="points-line ${r.points >= 0 ? 'positive' : 'negative'}"><strong>${formatPoints(r.points)}</strong></span>
               </td>`).join('')}
             ${showDelete ? `<td><button class="small danger" onclick="removeGame('${g.id}')">削除</button></td>` : ''}
