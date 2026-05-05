@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Questrial:wght@400;700&display=swap">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -50,12 +50,22 @@
   .points-cell {
     text-align: right;
     padding-right: 16px;
-    font-family: 'DM Mono', 'Menlo', 'Consolas', 'Courier New', monospace;
+    font-family: 'Questrial', 'Menlo', 'Consolas', 'Courier New', monospace;
     font-variant-numeric: tabular-nums;
     white-space: pre;
   }
+  .pt-sign {
+    display: inline-block;
+    width: 1em;
+    text-align: right;
+  }
+  .pt-num {
+    display: inline-block;
+    text-align: right;
+    min-width: 3.2em;
+  }
   .history-cell {
-    font-family: 'DM Mono', 'Menlo', 'Consolas', 'Courier New', monospace;
+    font-family: 'Questrial', 'Menlo', 'Consolas', 'Courier New', monospace;
     font-variant-numeric: tabular-nums;
     white-space: pre;
     line-height: 1.4;
@@ -385,15 +395,24 @@ function normalizeScore(raw) {
   return Math.abs(v) < 1000 ? v * 100 : v;
 }
 
+//function formatPoints(p) {
+//  const rounded = Math.round(p * 10) / 10;
+//  const abs = Math.abs(rounded);
+//  const intPart = Math.floor(abs);
+//  const decPart = Math.round((abs - intPart) * 10);
+//  const intStr = String(intPart).padStart(3, ' ');
+//  const numStr = `${intStr}.${decPart}`;
+//  if (rounded === 0) return ` ${numStr}`;
+//  return rounded < 0 ? `▲${numStr}` : ` ${numStr}`;
+//}
 function formatPoints(p) {
   const rounded = Math.round(p * 10) / 10;
   const abs = Math.abs(rounded);
-  const intPart = Math.floor(abs);
-  const decPart = Math.round((abs - intPart) * 10);
-  const intStr = String(intPart).padStart(3, ' ');
-  const numStr = `${intStr}.${decPart}`;
-  if (rounded === 0) return ` ${numStr}`;
-  return rounded < 0 ? `▲${numStr}` : ` ${numStr}`;
+  const numStr = abs.toFixed(1);  // 例: "999.9", "99.9", "5.3", "0.0"
+  let sign = '';
+  if (rounded < 0) sign = '▲';
+  // 符号部と数値部を別spanで包む
+  return `<span class="pt-sign">${sign}</span><span class="pt-num">${numStr}</span>`;
 }
 
 function formatScore(s) { return s.toLocaleString('en-US'); }
