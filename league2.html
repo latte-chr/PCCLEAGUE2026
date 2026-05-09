@@ -278,6 +278,9 @@ async function init() {
     console.error(err);
     document.getElementById('loginError').textContent = '接続に失敗しました: ' + err.message;
   }
+  render();
+  renderQualifying();
+  renderFinal();
 }
 
 function enterApp() {
