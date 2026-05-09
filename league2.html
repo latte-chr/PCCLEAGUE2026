@@ -202,16 +202,12 @@
       <div class="tab active" data-tab="qualifying" onclick="switchTab('qualifying')">予選順位</div>
       <div class="tab" data-tab="final" onclick="switchTab('final')">決勝順位</div>
     </div>
-    <div id="panelTotal"><div id="rankingTotal"></div></div>
-    <div id="panelQualifying" style="display:none"><div id="rankingQualifying"></div></div>
-    <div id="panelFinal" style="display:none"><div id="rankingFinal"></div></div>
-  </div>
-
-  <div id="tab-qualifying" class="tab-content">
-    <div id="qualifyingRanking"></div>
-  </div>
-  <div id="tab-final" class="tab-content" style="display:none">
-    <div id="finalRanking"></div>
+    <div id="tab-qualifying" class="tab-content">
+      <div id="qualifyingRanking"></div>
+    </div>
+    <div id="tab-final" class="tab-content" style="display:none">
+      <div id="finalRanking"></div>
+    </div>
   </div>
 
   <div class="card">
@@ -229,6 +225,7 @@
     </div>
     <div id="gameHistory"></div>
   </div>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
