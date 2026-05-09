@@ -570,7 +570,7 @@ function buildRankingTable(stats) {
 
 function renderRankings() {
   // 総合
-  document.getElementById('rankingTotal').innerHTML = buildRankingTable(calcTeamStats(data.games));
+  <!-- document.getElementById('rankingTotal').innerHTML = buildRankingTable(calcTeamStats(data.games)); -->
   // 予選
   const qGames = data.games.filter(g => g.phase === 'qualifying');
   document.getElementById('rankingQualifying').innerHTML =
