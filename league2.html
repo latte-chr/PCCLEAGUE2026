@@ -451,15 +451,40 @@ async function removeGame(id) {
   }
 }
 
+<!-- 
 function switchTab(tab) {
   currentTab = tab;
-  <!-- ['total','qualifying','final'].forEach(t => { -->
-  ['qualifying','final'].forEach(t => {
+  ['total','qualifying','final'].forEach(t => {
     const tabName = t.charAt(0).toUpperCase() + t.slice(1);
     document.getElementById('tab' + tabName).classList.toggle('active', t === tab);
     document.getElementById('panel' + tabName).style.display = t === tab ? 'block' : 'none';
   });
   renderRankings();
+}
+-->
+
+function switchTab(tab) {
+  currentTab = tab;
+  // タブのアクティブ表示更新
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.querySelector(`.tab[data-tab="${tab}"]`).classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+  document.getElementById('tab-' + tab).style.display = 'block';
+
+  if (tab === 'qualifying') renderQualifying();
+  else if (tab === 'final') renderFinal();
+}
+
+function renderQualifying() {
+  const filtered = data.games.filter(g => g.phase === 'qualifying');
+  const stats = calcStatsByTeam(filtered);
+  document.getElementById('qualifyingRanking').innerHTML = buildRankingTable(stats);
+}
+
+function renderFinal() {
+  const filtered = data.games.filter(g => g.phase === 'final');
+  const stats = calcStatsByTeam(filtered);
+  document.getElementById('finalRanking').innerHTML = buildRankingTable(stats);
 }
 
 // チーム別の集計
