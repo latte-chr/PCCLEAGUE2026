@@ -487,6 +487,31 @@ function renderFinal() {
   document.getElementById('finalRanking').innerHTML = buildRankingTable(stats);
 }
 
+function calcStatsByTeam(games) {
+  const stats = {};
+  games.forEach(g => {
+    g.results.forEach(r => {
+      const key = r.team || '(未所属)';
+      if (!stats[key]) {
+        stats[key] = { team: key, games: 0, totalPoints: 0, ranks: [0, 0, 0, 0] };
+      }
+      stats[key].games++;
+      stats[key].totalPoints += r.points;
+      if (r.rank >= 1 && r.rank <= 4) {
+        stats[key].ranks[r.rank - 1]++;
+      }
+    });
+  });
+  return Object.values(stats)
+    .map(s => ({
+      ...s,
+      avgRank: s.games > 0
+        ? s.ranks.reduce((sum, c, i) => sum + c * (i + 1), 0) / s.games
+        : 0
+    }))
+    .sort((a, b) => b.totalPoints - a.totalPoints);
+}
+
 // チーム別の集計
 function calcTeamStats(games) {
   const stats = {};
