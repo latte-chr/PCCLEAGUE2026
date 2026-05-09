@@ -620,13 +620,20 @@ function renderTotal() {
 function renderDaily() {
   const dates = [...new Set(data.games.map(g => g.date))].sort((a, b) => b.localeCompare(a));
   const select = document.getElementById('dailyDateSelect');
-  const prev = select.value;
+  const prev = select.value || 'all';
   select.innerHTML = '<option value="all">全ての対局日を表示</option>' +
     dates.map(d => `<option value="${d}">${d}</option>`).join('');
-  if (dates.includes(prev) || prev === 'all') select.value = prev;
+  if (dates.includes(prev) || prev === 'all') {
+    select.value = prev;
+  } else {
+    select.value = 'all';
+  }
 
   const target = document.getElementById('dailyRanking');
-  if (data.games.length === 0) { target.innerHTML = '<div class="empty">対局データがありません</div>'; return; }
+  if (data.games.length === 0) {
+    target.innerHTML = '<div class="empty">対局データがありません</div>';
+    return;
+  }
 
   const selected = select.value;
   const showDates = selected === 'all' ? dates : [selected];
@@ -788,8 +795,9 @@ function render() {
   }
 
   renderTotal();
-  if (currentTab === 'daily') renderDaily();
-  if (currentTab === 'period') renderPeriod();
+  //if (currentTab === 'daily') renderDaily();
+  //if (currentTab === 'period') renderPeriod();
+  renderDaily(); 
   renderHistory();
 }
 
