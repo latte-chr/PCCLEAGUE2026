@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>チーム戦202605</title>
+<title>ペアマッチ202605成績管理</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Questrial:wght@400;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700&family=Questrial&display=swap">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -43,66 +42,61 @@
   .rank-1 { color: #d69e2e; font-weight: bold; }
   .rank-2 { color: #718096; font-weight: bold; }
   .rank-3 { color: #b7791f; font-weight: bold; }
-  //.positive { color: #2f855a; }
-  //.negative { color: #c53030; }
-  .positive { color: #319795; }
-  .negative { color: #d53f8c; }
+  .positive { color: #2f855a; }
+  .negative { color: #c53030; }
   .points-cell {
-    text-align: right;
-    padding-right: 16px;
+    text-align: right; padding-right: 16px;
     font-family: 'Questrial', 'Menlo', 'Consolas', 'Courier New', monospace;
     font-variant-numeric: tabular-nums;
-    //white-space: pre;
   }
-  .pt-sign {
-    display: inline-block;
-    width: 0.4em;
-    text-align: right;
-  }
-  .pt-num {
-    display: inline-block;
-    text-align: right;
-    min-width: 3.2em;
-  }
+  .pt-sign { display: inline-block; width: 0.7em; text-align: right; }
+  .pt-num { display: inline-block; text-align: right; min-width: 3.2em; }
   .history-cell {
     font-family: 'Questrial', 'Menlo', 'Consolas', 'Courier New', monospace;
     font-variant-numeric: tabular-nums;
-    white-space: pre;
     line-height: 1.4;
+    text-align: right;
+    padding-right: 12px;
   }
   .history-cell .player-name {
     font-family: 'M PLUS Rounded 1c', 'Hiragino Sans', 'Yu Gothic', sans-serif;
-    font-weight: bold;
-    display: block;
-    margin-bottom: 2px;
+    font-weight: bold; display: block; margin-bottom: 2px; text-align: right;
   }
-  .history-cell .score-line { font-size: 12px; color: #4a5568; display: block;}
-  .history-cell .points-line { font-size: 12px; display: block; }
+  .history-cell .team-name {
+    font-family: 'M PLUS Rounded 1c', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    font-size: 11px; color: #718096; display: block; text-align: right;
+  }
+  .history-cell .score-line { font-size: 12px; color: #4a5568; display: block; text-align: right; }
+  .history-cell .points-line { font-size: 12px; display: block; text-align: right; }
   .table-tag { display: inline-block; background: #4299e1; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
   .round-tag { display: inline-block; background: #9f7aea; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+  .phase-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: #fff; }
+  .phase-qualifying { background: #38b2ac; }
+  .phase-final { background: #ed8936; }
   .game-inputs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; }
   .game-inputs > div { display: flex; flex-direction: column; gap: 4px; }
   .game-inputs label { font-size: 12px; color: #4a5568; font-weight: bold; }
+  .player-input-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; margin-bottom: 8px; align-items: center; }
   .hint { font-size: 11px; color: #a0aec0; }
   .empty { text-align: center; color: #a0aec0; padding: 20px; }
   .toolbar { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; margin-bottom: 10px; }
   .badge { display: inline-block; background: #4299e1; color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 12px; margin-left: 8px; }
-  .tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 2px solid #e2e8f0; flex-wrap: wrap; }
   .tab { padding: 8px 16px; background: #edf2f7; border: none; border-radius: 6px 6px 0 0; cursor: pointer; font-weight: bold; color: #4a5568; font-size: 14px; }
   .tab.active { background: #4299e1; color: #fff; }
   .filter-row { background: #f7fafc; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
-  .daily-section { margin-bottom: 24px; border-left: 4px solid #4299e1; padding-left: 12px; }
-  .daily-date { font-size: 16px; font-weight: bold; color: #2c5282; margin-bottom: 8px; }
+  .player-list-card { background: #ebf4ff; padding: 8px 12px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .team-group { background: #f7fafc; padding: 12px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #4299e1; }
+  .team-group-title { font-weight: bold; color: #2c5282; margin-bottom: 8px; font-size: 15px; }
 
   .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(45, 55, 72, 0.85); z-index: 1000; display: flex; align-items: center; justify-content: center; }
   .login-box { background: #fff; padding: 32px; border-radius: 12px; width: 90%; max-width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
   .login-box h2 { text-align: center; border: none; }
   .login-box .row { flex-direction: column; align-items: stretch; }
   .login-error { color: #c53030; font-size: 13px; margin-top: 8px; min-height: 20px; }
-  .status-bar { display: flex; justify-content: space-between; align-items: center; background: #2c5282; color: #fff; padding: 8px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; }
-  .status-bar .sync-icon { font-size: 16px; }
+  .status-bar { display: flex; justify-content: space-between; align-items: center; background: #2c5282; color: #fff; padding: 8px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 13px; flex-wrap: wrap; gap: 8px; }
+  .status-bar a { color: #fff; text-decoration: underline; }
   .status-bar button { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); padding: 4px 12px; font-size: 12px; }
-  .status-bar button:hover { background: rgba(255,255,255,0.3); }
   .role-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; margin-left: 6px; }
   .role-admin { background: #d69e2e; color: #fff; }
   .role-viewer { background: #718096; color: #fff; }
@@ -110,53 +104,40 @@
   @media (max-width: 600px) {
     .game-inputs { grid-template-columns: 1fr 1fr; }
     th, td { font-size: 12px; padding: 6px 4px; }
+    .player-input-row { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
-<!-- ログイン画面 -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
-    <h2>🀄Chiinyan's LEAGUE 2026🀄</h2>
-    <p style="text-align:center; color:#718096; margin-bottom:16px; font-size:13px;">パスワードを入力してください</p>
-    <div class="row">
-      <input type="password" id="loginPassword" placeholder="パスワード" autocomplete="current-password">
-      <button onclick="tryLogin()" style="width:100%">ログイン</button>
-    </div>
-    <div class="login-error" id="loginError"></div>
-    <p style="text-align:center; color:#a0aec0; font-size:11px; margin-top:16px;" id="loginStatus">接続中...</p>
+    <h2>🎴 リーグ2</h2>
+    <p style="text-align:center; color:#718096; margin-bottom:16px; font-size:13px;">ログインしてください</p>
+    <p class="login-error" id="loginError">ログイン状態を確認中...</p>
+    <p style="text-align:center; margin-top:16px;"><a href="index.html">ログイン画面へ</a></p>
   </div>
 </div>
 
-<div class="status-bar">
-  <span>
-    <span class="sync-icon">☁️</span>
-    <span id="syncStatus">同期中...</span>
-    <span id="roleBadge"></span>
-    <span style="margin-left:12px"><a href="index.html" style="color:#fff; text-decoration:underline;">← リーグ選択へ</a></span>
-  </span>
-  <button onclick="logout()">ログアウト</button>
-</div>
-
 <div class="container" id="mainContainer" style="display:none">
-  <h1>🀄チーム戦202605🀄</h1>
+  <h1>🎴 リーグ2 - チーム戦成績管理</h1>
 
   <div class="status-bar">
     <span>
-      <span class="sync-icon">☁️</span>
+      <span>☁️</span>
       <span id="syncStatus">同期中...</span>
       <span id="roleBadge"></span>
+      <span style="margin-left:12px"><a href="index.html">← リーグ選択へ</a></span>
     </span>
     <button onclick="logout()">ログアウト</button>
   </div>
 
-  <!-- 管理者専用エリア -->
   <div id="adminArea" style="display:none">
     <div class="card">
       <h2>プレイヤー登録 <span class="badge" id="playerCount">0人</span></h2>
-      <div class="row">
-        <input type="text" id="playerName" placeholder="プレイヤー名を入力" maxlength="20">
+      <div class="player-input-row">
+        <input type="text" id="newTeamName" placeholder="チーム名" maxlength="30">
+        <input type="text" id="newPlayerName" placeholder="プレイヤー名" maxlength="20">
         <button onclick="addPlayer()">追加</button>
       </div>
       <div id="playerList"></div>
@@ -167,11 +148,18 @@
       <div class="row">
         <label>対局日:</label>
         <input type="date" id="gameDate">
+        <label>区分:</label>
+        <select id="gamePhase" style="max-width:120px">
+          <option value="qualifying">予選</option>
+          <option value="final">決勝</option>
+        </select>
         <label>卓:</label>
         <select id="gameTable" style="max-width:100px">
           <option value="A">A卓</option>
           <option value="B">B卓</option>
           <option value="C">C卓</option>
+          <option value="D">D卓</option>
+          <option value="E">E卓</option>
         </select>
         <label>回戦:</label>
         <select id="gameRound" style="max-width:120px">
@@ -197,10 +185,7 @@
       </div>
       <div class="game-inputs" id="gameInputs"></div>
       <div class="row">
-        <span class="hint">※ 素点は下2桁の "00" を省略できます (例: "321" → 32100、"250" → 25000)。</span>
-      </div>
-      <div class="row">
-        <span class="hint">※ ポイント計算式: (素点 - 返し点)/1000 + ウマ + (1位のみオカ)</span>
+        <span class="hint">※ 素点は下2桁の "00" を省略できます。</span>
       </div>
       <div class="row">
         <button onclick="addGame()">この対局を記録</button>
@@ -209,42 +194,28 @@
     </div>
   </div>
 
-  <!-- 全員共通エリア (順位表 + 対局履歴) -->
   <div class="card">
-    <h2>順位表</h2>
+    <h2>順位表（チーム別）</h2>
     <div class="tabs">
       <button class="tab active" id="tabTotal" onclick="switchTab('total')">総合順位</button>
-      <button class="tab" id="tabDaily" onclick="switchTab('daily')">日付別順位</button>
-      <button class="tab" id="tabPeriod" onclick="switchTab('period')">期間集計</button>
+      <button class="tab" id="tabQualifying" onclick="switchTab('qualifying')">予選順位</button>
+      <button class="tab" id="tabFinal" onclick="switchTab('final')">決勝順位</button>
     </div>
-    <div id="panelTotal"><div id="rankingTable"></div></div>
-    <div id="panelDaily" style="display:none">
-      <div class="filter-row">
-        <div class="row">
-          <label>表示する日付:</label>
-          <select id="dailyDateSelect" onchange="renderDaily()">
-            <option value="all">全ての対局日を表示</option>
-          </select>
-        </div>
-      </div>
-      <div id="dailyRanking"></div>
-    </div>
-    <div id="panelPeriod" style="display:none">
-      <div class="filter-row">
-        <div class="row">
-          <label>開始日:</label>
-          <input type="date" id="periodFrom" onchange="renderPeriod()">
-          <label>終了日:</label>
-          <input type="date" id="periodTo" onchange="renderPeriod()">
-          <button class="small secondary" onclick="clearPeriod()">クリア</button>
-        </div>
-      </div>
-      <div id="periodRanking"></div>
-    </div>
+    <div id="panelTotal"><div id="rankingTotal"></div></div>
+    <div id="panelQualifying" style="display:none"><div id="rankingQualifying"></div></div>
+    <div id="panelFinal" style="display:none"><div id="rankingFinal"></div></div>
   </div>
 
   <div class="card">
     <h2>対局履歴 <span class="badge" id="gameCount">0局</span></h2>
+    <div class="row">
+      <label>表示:</label>
+      <select id="historyFilter" onchange="renderHistory()">
+        <option value="all">全て</option>
+        <option value="qualifying">予選のみ</option>
+        <option value="final">決勝のみ</option>
+      </select>
+    </div>
     <div class="toolbar" id="historyToolbar">
       <button class="small" onclick="exportData()">データ書き出し</button>
     </div>
@@ -274,54 +245,21 @@ const db = firebase.firestore();
 
 let data = { players: [], games: [] };
 let currentTab = 'total';
-//let historySort = { key: 'date', dir: 'desc' };
-// ソート優先順位リスト。先頭ほど優先度が高い
-// 各要素: { key: 'date'|'table'|'round', dir: 'asc'|'desc' }
 let historySortKeys = [
   { key: 'date', dir: 'desc' },
+  { key: 'phase', dir: 'asc' },
   { key: 'table', dir: 'asc' },
   { key: 'round', dir: 'asc' }
 ];
 let unsubscribeGames = null;
 let unsubscribePlayers = null;
-let currentRole = null; // 'admin' or 'viewer'
-
-//async function init() {
-//  document.getElementById('gameDate').valueAsDate = new Date();
-//  document.getElementById('loginPassword').addEventListener('keydown', e => {
-//    if (e.key === 'Enter') tryLogin();
-//  });
-//
-//  try {
-//    document.getElementById('loginStatus').textContent = '接続中...';
-//    await auth.signInAnonymously();
-//    document.getElementById('loginStatus').textContent = '準備完了。パスワードを入力してください。';
-//
-//    // 既にメンバー登録済みかチェック
-//    const uid = auth.currentUser.uid;
-//    const memberDoc = await db.collection('members').doc(uid).get();
-//    const savedRole = localStorage.getItem('mahjongRole');
-//    if (memberDoc.exists && savedRole) {
-//      currentRole = memberDoc.data().role || savedRole;
-//      enterApp();
-//    }
-//  } catch (err) {
-//    console.error(err);
-//    document.getElementById('loginStatus').textContent = '接続に失敗しました: ' + err.message;
-//  }
-//}
+let currentRole = null;
 
 async function init() {
   document.getElementById('gameDate').valueAsDate = new Date();
-  document.getElementById('loginPassword').addEventListener('keydown', e => {
-    if (e.key === 'Enter') tryLogin();
-  });
 
   try {
-    document.getElementById('loginStatus').textContent = '接続中...';
     await auth.signInAnonymously();
-
-    // ログインチェック: ログインしていない場合はindex.htmlに戻す
     const uid = auth.currentUser.uid;
     const memberDoc = await db.collection('members').doc(uid).get();
     const savedRole = localStorage.getItem('mahjongRole');
@@ -329,48 +267,11 @@ async function init() {
       currentRole = memberDoc.data().role || savedRole;
       enterApp();
     } else {
-      // 未ログインならハブページへ
       location.href = 'index.html';
     }
   } catch (err) {
     console.error(err);
-    document.getElementById('loginStatus').textContent = '接続に失敗しました: ' + err.message;
-  }
-}
-
-async function tryLogin() {
-  const errEl = document.getElementById('loginError');
-  errEl.textContent = '';
-  const pw = document.getElementById('loginPassword').value.trim();
-  if (!pw) { errEl.textContent = 'パスワードを入力してください'; return; }
-
-  try {
-    const configDoc = await db.collection('config').doc('app').get();
-    if (!configDoc.exists) {
-      errEl.textContent = '設定が見つかりません。管理者に確認してください。';
-      return;
-    }
-    const cfg = configDoc.data();
-    let role = null;
-    if (cfg.adminPassword && pw === cfg.adminPassword) role = 'admin';
-    else if (cfg.viewerPassword && pw === cfg.viewerPassword) role = 'viewer';
-
-    if (!role) {
-      errEl.textContent = 'パスワードが違います';
-      return;
-    }
-
-    const uid = auth.currentUser.uid;
-    await db.collection('members').doc(uid).set({
-      role,
-      joinedAt: firebase.firestore.FieldValue.serverTimestamp()
-    });
-    localStorage.setItem('mahjongRole', role);
-    currentRole = role;
-    enterApp();
-  } catch (err) {
-    console.error(err);
-    errEl.textContent = 'エラー: ' + err.message;
+    document.getElementById('loginError').textContent = '接続に失敗しました: ' + err.message;
   }
 }
 
@@ -378,7 +279,6 @@ function enterApp() {
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('mainContainer').style.display = 'block';
 
-  // 役割に応じてUI切替
   const adminArea = document.getElementById('adminArea');
   const roleBadge = document.getElementById('roleBadge');
   const historyToolbar = document.getElementById('historyToolbar');
@@ -391,7 +291,6 @@ function enterApp() {
     roleBadge.innerHTML = '<span class="role-badge role-viewer">閲覧者</span>';
     historyToolbar.style.display = 'none';
   }
-
   startSync();
 }
 
@@ -400,7 +299,7 @@ function logout() {
   localStorage.removeItem('mahjongRole');
   if (unsubscribeGames) unsubscribeGames();
   if (unsubscribePlayers) unsubscribePlayers();
-  location.reload();
+  location.href = 'index.html';
 }
 
 function startSync() {
@@ -408,7 +307,7 @@ function startSync() {
 
   unsubscribePlayers = db.collection('league2_players').orderBy('createdAt', 'asc')
     .onSnapshot(snapshot => {
-      data.players = snapshot.docs.map(d => d.data().name);
+      data.players = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
       render();
     }, err => {
       console.error('players sync error', err);
@@ -432,56 +331,55 @@ function normalizeScore(raw) {
   return Math.abs(v) < 1000 ? v * 100 : v;
 }
 
-//function formatPoints(p) {
-//  const rounded = Math.round(p * 10) / 10;
-//  const abs = Math.abs(rounded);
-//  const intPart = Math.floor(abs);
-//  const decPart = Math.round((abs - intPart) * 10);
-//  const intStr = String(intPart).padStart(3, ' ');
-//  const numStr = `${intStr}.${decPart}`;
-//  if (rounded === 0) return ` ${numStr}`;
-//  return rounded < 0 ? `▲${numStr}` : ` ${numStr}`;
-//}
 function formatPoints(p) {
   const rounded = Math.round(p * 10) / 10;
   const abs = Math.abs(rounded);
-  const numStr = abs.toFixed(1);  // 例: "999.9", "99.9", "5.3", "0.0"
+  const numStr = abs.toFixed(1);
   let sign = '';
   if (rounded < 0) sign = '▲';
-  // 符号部と数値部を別spanで包む
   return `<span class="pt-sign">${sign}</span><span class="pt-num">${numStr}</span>`;
 }
 
 function formatScore(s) { return s.toLocaleString('en-US'); }
 
+// プレイヤー名から該当プレイヤーオブジェクトを取得
+function findPlayerByName(name) {
+  return data.players.find(p => p.name === name);
+}
+
 async function addPlayer() {
   if (currentRole !== 'admin') return alert('管理者のみ操作可能です');
-  const input = document.getElementById('playerName');
-  const name = input.value.trim();
+  const teamInput = document.getElementById('newTeamName');
+  const nameInput = document.getElementById('newPlayerName');
+  const team = teamInput.value.trim();
+  const name = nameInput.value.trim();
+  if (!team) return alert('チーム名を入力してください');
   if (!name) return alert('プレイヤー名を入力してください');
-  if (data.players.includes(name)) return alert('同名のプレイヤーが既に存在します');
+  if (data.players.some(p => p.name === name && p.team === team)) {
+    return alert('同じチーム・同じ名前のプレイヤーが既に存在します');
+  }
   try {
     await db.collection('league2_players').add({
-      name,
+      team, name,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
-    input.value = '';
+    teamInput.value = '';
+    nameInput.value = '';
   } catch (err) {
     alert('追加に失敗: ' + err.message);
   }
 }
 
-async function removePlayer(name) {
+async function removePlayer(id) {
   if (currentRole !== 'admin') return alert('管理者のみ操作可能です');
-  const used = data.games.some(g => g.results.some(r => r.player === name));
+  const player = data.players.find(p => p.id === id);
+  if (!player) return;
+  const used = data.games.some(g => g.results.some(r => r.player === player.name));
   if (used) {
-    if (!confirm(`${name}さんは対局履歴に含まれています。削除しますか？(履歴は残ります)`)) return;
+    if (!confirm(`${player.name}さんは対局履歴に含まれています。削除しますか？(履歴は残ります)`)) return;
   }
   try {
-    const snapshot = await db.collection('league2_players').where('name', '==', name).get();
-    const batch = db.batch();
-    snapshot.docs.forEach(d => batch.delete(d.ref));
-    await batch.commit();
+    await db.collection('league2_players').doc(id).delete();
   } catch (err) {
     alert('削除に失敗: ' + err.message);
   }
@@ -491,23 +389,26 @@ async function addGame() {
   if (currentRole !== 'admin') return alert('管理者のみ操作可能です');
   const date = document.getElementById('gameDate').value;
   if (!date) return alert('対局日を入力してください');
+  const phase = document.getElementById('gamePhase').value;
   const tableName = document.getElementById('gameTable').value;
   const round = parseInt(document.getElementById('gameRound').value);
 
   const umaParts = document.getElementById('umaConfig').value.split(',').map(s => parseFloat(s.trim()));
-  if (umaParts.length !== 4 || umaParts.some(isNaN)) return alert('ウマは "30,10,-10,-30" の形式で入力してください');
+  if (umaParts.length !== 4 || umaParts.some(isNaN)) return alert('ウマの形式が誤っています');
   const oka = parseFloat(document.getElementById('okaConfig').value) || 0;
   const startPoint = parseInt(document.getElementById('startPoint').value) || 25000;
   const returnPoint = parseInt(document.getElementById('returnPoint').value) || startPoint;
 
   const results = [];
   for (let i = 0; i < 4; i++) {
-    const player = document.getElementById(`gp_${i}`).value;
+    const playerName = document.getElementById(`gp_${i}`).value;
     const score = normalizeScore(document.getElementById(`gs_${i}`).value);
-    if (!player) return alert(`${i+1}人目のプレイヤーを選んでください`);
+    if (!playerName) return alert(`${i+1}人目のプレイヤーを選んでください`);
     if (isNaN(score)) return alert(`${i+1}人目の素点を入力してください`);
-    if (results.some(r => r.player === player)) return alert('同じプレイヤーが重複しています');
-    results.push({ player, score });
+    if (results.some(r => r.player === playerName)) return alert('同じプレイヤーが重複しています');
+    const playerObj = findPlayerByName(playerName);
+    const team = playerObj ? playerObj.team : '';
+    results.push({ player: playerName, team, score });
   }
 
   const sum = results.reduce((a, r) => a + r.score, 0);
@@ -515,9 +416,9 @@ async function addGame() {
     if (!confirm(`素点の合計が ${sum} で持ち点合計 ${startPoint*4} と一致しません。記録しますか？`)) return;
   }
 
-  const dup = data.games.find(g => g.date === date && g.table === tableName && g.round === round);
+  const dup = data.games.find(g => g.date === date && g.phase === phase && g.table === tableName && g.round === round);
   if (dup) {
-    if (!confirm(`${date} ${tableName}卓 ${round}回戦 のデータが既に存在します。追加で記録しますか？`)) return;
+    if (!confirm(`${date} ${phase==='qualifying'?'予選':'決勝'} ${tableName}卓 ${round}回戦 のデータが既に存在します。追加で記録しますか？`)) return;
   }
 
   const sorted = [...results].map((r, i) => ({...r, originalIdx: i})).sort((a, b) => b.score - a.score);
@@ -530,7 +431,7 @@ async function addGame() {
 
   try {
     await db.collection('league2_games').add({
-      date, table: tableName, round,
+      date, phase, table: tableName, round,
       startPoint, returnPoint, uma: umaParts, oka, results,
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -554,24 +455,31 @@ async function removeGame(id) {
 
 function switchTab(tab) {
   currentTab = tab;
-  ['total','daily','period'].forEach(t => {
-    document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === tab);
-    document.getElementById('panel' + t.charAt(0).toUpperCase() + t.slice(1)).style.display = t === tab ? 'block' : 'none';
+  ['total','qualifying','final'].forEach(t => {
+    const tabName = t.charAt(0).toUpperCase() + t.slice(1);
+    document.getElementById('tab' + tabName).classList.toggle('active', t === tab);
+    document.getElementById('panel' + tabName).style.display = t === tab ? 'block' : 'none';
   });
-  if (tab === 'daily') renderDaily();
-  if (tab === 'period') renderPeriod();
+  renderRankings();
 }
 
-function calcStats(games) {
+// チーム別の集計
+function calcTeamStats(games) {
   const stats = {};
   games.forEach(g => {
     g.results.forEach(r => {
-      if (!stats[r.player]) {
-        stats[r.player] = { player: r.player, games: 0, totalPoints: 0, ranks: [0,0,0,0], avgRank: 0 };
+      // 対局時にteamが記録されていなければ、現在のplayersから検索
+      let team = r.team;
+      if (!team) {
+        const p = findPlayerByName(r.player);
+        team = p ? p.team : '(未所属)';
       }
-      stats[r.player].games++;
-      stats[r.player].totalPoints += r.points;
-      stats[r.player].ranks[r.rank - 1]++;
+      if (!stats[team]) {
+        stats[team] = { team, games: 0, totalPoints: 0, ranks: [0,0,0,0] };
+      }
+      stats[team].games++;
+      stats[team].totalPoints += r.points;
+      stats[team].ranks[r.rank - 1]++;
     });
   });
   Object.values(stats).forEach(s => {
@@ -590,8 +498,8 @@ function buildRankingTable(stats) {
     <table>
       <thead>
         <tr>
-          <th>順位</th><th>プレイヤー</th><th>対局数</th>
-          <th>合計</th><th>平均着順</th>
+          <th>順位</th><th>チーム</th><th>対局数</th>
+          <th>合計ポイント</th><th>平均順位</th>
           <th>1位</th><th>2位</th><th>3位</th><th>4位</th>
         </tr>
       </thead>
@@ -599,7 +507,7 @@ function buildRankingTable(stats) {
         ${stats.map((s, i) => `
           <tr>
             <td class="rank-${i+1 <= 3 ? i+1 : ''}">${i+1}</td>
-            <td style="text-align:left;padding-left:16px">${escapeHtml(s.player)}</td>
+            <td style="text-align:left;padding-left:16px;font-weight:bold">${escapeHtml(s.team)}</td>
             <td>${s.games}</td>
             <td class="points-cell ${s.totalPoints >= 0 ? 'positive' : 'negative'}"><strong>${formatPoints(s.totalPoints)}</strong></td>
             <td>${s.avgRank.toFixed(2)}</td>
@@ -611,56 +519,21 @@ function buildRankingTable(stats) {
   `;
 }
 
-function renderTotal() {
-  document.getElementById('rankingTable').innerHTML = buildRankingTable(calcStats(data.games));
+function renderRankings() {
+  // 総合
+  document.getElementById('rankingTotal').innerHTML = buildRankingTable(calcTeamStats(data.games));
+  // 予選
+  const qGames = data.games.filter(g => g.phase === 'qualifying');
+  document.getElementById('rankingQualifying').innerHTML =
+    `<h3>予選 <span class="badge">${qGames.length}局</span></h3>` +
+    buildRankingTable(calcTeamStats(qGames));
+  // 決勝
+  const fGames = data.games.filter(g => g.phase === 'final');
+  document.getElementById('rankingFinal').innerHTML =
+    `<h3>決勝 <span class="badge">${fGames.length}局</span></h3>` +
+    buildRankingTable(calcTeamStats(fGames));
 }
 
-function renderDaily() {
-  const dates = [...new Set(data.games.map(g => g.date))].sort((a, b) => b.localeCompare(a));
-  const select = document.getElementById('dailyDateSelect');
-  const prev = select.value;
-  select.innerHTML = '<option value="all">全ての対局日を表示</option>' +
-    dates.map(d => `<option value="${d}">${d}</option>`).join('');
-  if (dates.includes(prev) || prev === 'all') select.value = prev;
-
-  const target = document.getElementById('dailyRanking');
-  if (data.games.length === 0) { target.innerHTML = '<div class="empty">対局データがありません</div>'; return; }
-
-  const selected = select.value;
-  const showDates = selected === 'all' ? dates : [selected];
-  target.innerHTML = showDates.map(date => {
-    const dayGames = data.games.filter(g => g.date === date);
-    return `
-      <div class="daily-section">
-        <div class="daily-date">📅 ${date} <span class="badge">${dayGames.length}局</span></div>
-        ${buildRankingTable(calcStats(dayGames))}
-      </div>
-    `;
-  }).join('');
-}
-
-function renderPeriod() {
-  const from = document.getElementById('periodFrom').value;
-  const to = document.getElementById('periodTo').value;
-  let games = data.games;
-  if (from) games = games.filter(g => g.date >= from);
-  if (to) games = games.filter(g => g.date <= to);
-  let header = (from || to)
-    ? `<h3>${from || '最初'} 〜 ${to || '最新'} の集計 <span class="badge">${games.length}局</span></h3>`
-    : `<h3>全期間の集計 <span class="badge">${games.length}局</span></h3>`;
-  document.getElementById('periodRanking').innerHTML = header + buildRankingTable(calcStats(games));
-}
-
-function clearPeriod() {
-  document.getElementById('periodFrom').value = '';
-  document.getElementById('periodTo').value = '';
-  renderPeriod();
-}
-
-// ヘッダークリック時の挙動:
-// - そのキーが先頭なら昇降を切替
-// - そのキーが含まれるが先頭でないなら、先頭に持ってくる(方向は維持)
-// - 含まれないなら先頭に追加(デフォルト方向で)
 function sortHistory(key) {
   const idx = historySortKeys.findIndex(s => s.key === key);
   if (idx === 0) {
@@ -677,13 +550,16 @@ function sortHistory(key) {
 
 function renderHistory() {
   const gh = document.getElementById('gameHistory');
-  if (data.games.length === 0) { gh.innerHTML = '<div class="empty">対局履歴がありません</div>'; return; }
+  const filter = document.getElementById('historyFilter').value;
+  let games = data.games;
+  if (filter !== 'all') games = games.filter(g => g.phase === filter);
+  if (games.length === 0) { gh.innerHTML = '<div class="empty">対局履歴がありません</div>'; return; }
 
-  // 複合ソート: 優先順位リストに従って順番に比較
-  const sorted = [...data.games].sort((a, b) => {
+  const sorted = [...games].sort((a, b) => {
     for (const s of historySortKeys) {
       let av, bv;
       if (s.key === 'date') { av = a.date || ''; bv = b.date || ''; }
+      else if (s.key === 'phase') { av = a.phase || ''; bv = b.phase || ''; }
       else if (s.key === 'table') { av = a.table || ''; bv = b.table || ''; }
       else if (s.key === 'round') { av = a.round || 0; bv = b.round || 0; }
       let cmp = (typeof av === 'number') ? av - bv : av.localeCompare(bv);
@@ -692,17 +568,15 @@ function renderHistory() {
     return 0;
   });
 
-  // ヘッダー表示用ヘルパー
   const sortInfo = (key) => {
     const idx = historySortKeys.findIndex(s => s.key === key);
-    if (idx < 0) return { active: false, dir: null, order: null };
+    if (idx < 0) return { active: false };
     return { active: true, dir: historySortKeys[idx].dir, order: idx + 1 };
   };
   const arrow = (key) => {
     const info = sortInfo(key);
     if (!info.active) return '<span class="sort-icon">⇅</span>';
     const dirArrow = info.dir === 'asc' ? '▲' : '▼';
-    // 優先順位が2以上なら数字で示す
     const orderLabel = historySortKeys.length > 1 ? `<sub style="font-size:9px">${info.order}</sub>` : '';
     return `<span class="sort-icon">${dirArrow}${orderLabel}</span>`;
   };
@@ -710,14 +584,11 @@ function renderHistory() {
   const showDelete = currentRole === 'admin';
 
   gh.innerHTML = `
-    <div class="row" style="font-size:12px; color:#718096; margin-bottom:8px;">
-      ヘッダーをクリックしてソート(複合キー対応)。優先順位の数字は左下に表示されます。
-      <button class="small secondary" onclick="resetHistorySort()">並び順をリセット</button>
-    </div>
     <table>
       <thead>
         <tr>
           <th class="${ac('date')}" onclick="sortHistory('date')">日付${arrow('date')}</th>
+          <th class="${ac('phase')}" onclick="sortHistory('phase')">区分${arrow('phase')}</th>
           <th class="${ac('table')}" onclick="sortHistory('table')">卓${arrow('table')}</th>
           <th class="${ac('round')}" onclick="sortHistory('round')">回戦${arrow('round')}</th>
           <th>1位</th><th>2位</th><th>3位</th><th>4位</th>${showDelete ? '<th></th>' : ''}
@@ -728,14 +599,26 @@ function renderHistory() {
           const byRank = [...g.results].sort((a, b) => a.rank - b.rank);
           const tableLabel = g.table ? `<span class="table-tag">${escapeHtml(g.table)}卓</span>` : '-';
           const roundLabel = g.round ? `<span class="round-tag">${g.round}回戦</span>` : '-';
+          const phaseLabel = g.phase === 'final'
+            ? `<span class="phase-tag phase-final">決勝</span>`
+            : `<span class="phase-tag phase-qualifying">予選</span>`;
           return `<tr>
-            <td>${g.date}</td><td>${tableLabel}</td><td>${roundLabel}</td>
-            ${byRank.map(r => `
-              <td class="history-cell">
-                <span class="player-name">${escapeHtml(r.player)}</span>
-                <span class="score-line">${formatScore(r.score)}点</span>
-                <span class="points-line ${r.points >= 0 ? 'positive' : 'negative'}"><strong>${formatPoints(r.points)}</strong></span>
-              </td>`).join('')}
+            <td>${g.date}</td><td>${phaseLabel}</td><td>${tableLabel}</td><td>${roundLabel}</td>
+            ${byRank.map(r => {
+              // 対局時のteamを優先、なければ現在の所属を検索
+              let team = r.team;
+              if (!team) {
+                const p = findPlayerByName(r.player);
+                team = p ? p.team : '';
+              }
+              return `
+                <td class="history-cell">
+                  <span class="team-name">${escapeHtml(team)}</span>
+                  <span class="player-name">${escapeHtml(r.player)}</span>
+                  <span class="score-line">${formatScore(r.score)}</span>
+                  <span class="points-line ${r.points >= 0 ? 'positive' : 'negative'}"><strong>${formatPoints(r.points)}</strong></span>
+                </td>`;
+            }).join('')}
             ${showDelete ? `<td><button class="small danger" onclick="removeGame('${g.id}')">削除</button></td>` : ''}
           </tr>`;
         }).join('')}
@@ -744,30 +627,35 @@ function renderHistory() {
   `;
 }
 
-function resetHistorySort() {
-  historySortKeys = [
-    { key: 'date', dir: 'desc' },
-    { key: 'table', dir: 'asc' },
-    { key: 'round', dir: 'asc' }
-  ];
-  renderHistory();
-}
-
-
 function render() {
   document.getElementById('playerCount').textContent = data.players.length + '人';
   document.getElementById('gameCount').textContent = data.games.length + '局';
 
-  // 管理者のみプレイヤーリスト・入力欄を更新
   if (currentRole === 'admin') {
+    // プレイヤーリスト: チームごとにグループ化して表示
     const pl = document.getElementById('playerList');
     if (data.players.length === 0) {
       pl.innerHTML = '<div class="empty">プレイヤーが登録されていません</div>';
     } else {
-      pl.innerHTML = '<div class="row" style="margin-top:10px">' +
-        data.players.map(p => `<span style="background:#ebf4ff;padding:6px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px">${escapeHtml(p)}<button class="small danger" onclick="removePlayer('${escapeJs(p)}')">×</button></span>`).join('') +
-        '</div>';
+      const grouped = {};
+      data.players.forEach(p => {
+        if (!grouped[p.team]) grouped[p.team] = [];
+        grouped[p.team].push(p);
+      });
+      pl.innerHTML = Object.keys(grouped).sort().map(team => `
+        <div class="team-group">
+          <div class="team-group-title">🏷️ ${escapeHtml(team)}</div>
+          ${grouped[team].map(p => `
+            <div class="player-list-card">
+              <span>${escapeHtml(p.name)}</span>
+              <button class="small danger" onclick="removePlayer('${p.id}')">削除</button>
+            </div>
+          `).join('')}
+        </div>
+      `).join('');
     }
+
+    // 対局入力欄
     const gi = document.getElementById('gameInputs');
     gi.innerHTML = '';
     for (let i = 0; i < 4; i++) {
@@ -776,7 +664,7 @@ function render() {
         <label>${i+1}人目</label>
         <select id="gp_${i}">
           <option value="">--選択--</option>
-          ${data.players.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('')}
+          ${data.players.map(p => `<option value="${escapeHtml(p.name)}">${escapeHtml(p.team)} / ${escapeHtml(p.name)}</option>`).join('')}
         </select>
         <input type="number" id="gs_${i}" placeholder="例: 321 or 32100" oninput="updateSum()">
       `;
@@ -785,9 +673,7 @@ function render() {
     updateSum();
   }
 
-  renderTotal();
-  if (currentTab === 'daily') renderDaily();
-  if (currentTab === 'period') renderPeriod();
+  renderRankings();
   renderHistory();
 }
 
@@ -810,16 +696,13 @@ function exportData() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `mahjong_league_${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `league2_${new Date().toISOString().slice(0,10)}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
 
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
-function escapeJs(s) {
-  return String(s).replace(/['\\]/g, '\\$&');
 }
 
 init();
