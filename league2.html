@@ -110,6 +110,44 @@
     .game-inputs { grid-template-columns: 1fr 1fr; }
     th, td { font-size: 12px; padding: 6px 4px; }
   }
+
+  .team-group {
+    margin-bottom: 16px;
+    padding: 12px;
+    background: #f7fafc;
+    border-radius: 8px;
+    border-left: 4px solid #4299e1;
+  }
+  .team-group-title {
+    font-weight: bold;
+    color: #2c5282;
+    margin-bottom: 8px;
+    font-size: 14px;
+  }
+  .player-list-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background: #fff;
+    border-radius: 6px;
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+  .player-list-card span {
+    font-weight: 500;
+  }
+  .player-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .player-input-row input {
+    flex: 1;
+    min-width: 100px;
+  }
+ 
 </style>
 </head>
 <body>
@@ -278,9 +316,6 @@ async function init() {
     console.error(err);
     document.getElementById('loginError').textContent = '接続に失敗しました: ' + err.message;
   }
-  render();
-  renderQualifying();
-  renderFinal();
 }
 
 function enterApp() {
@@ -675,9 +710,9 @@ function render() {
     updateSum();
   }
  
-  renderHistory();
   renderQualifying();
   renderFinal();
+  renderHistory();
 }
 
 function updateSum() {
