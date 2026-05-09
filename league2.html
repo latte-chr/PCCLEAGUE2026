@@ -453,7 +453,8 @@ async function removeGame(id) {
 
 function switchTab(tab) {
   currentTab = tab;
-  ['total','qualifying','final'].forEach(t => {
+  <!-- ['total','qualifying','final'].forEach(t => { -->
+  ['qualifying','final'].forEach(t => {
     const tabName = t.charAt(0).toUpperCase() + t.slice(1);
     document.getElementById('tab' + tabName).classList.toggle('active', t === tab);
     document.getElementById('panel' + tabName).style.display = t === tab ? 'block' : 'none';
