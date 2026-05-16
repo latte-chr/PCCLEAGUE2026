@@ -154,7 +154,7 @@
 
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
-    <h2>ペアマッチ202605</h2>
+    <h2>2026年5月ペアマッチ</h2>
     <p style="text-align:center; color:#718096; margin-bottom:16px; font-size:13px;">ログインしてください</p>
     <p class="login-error" id="loginError">ログイン状態を確認中...</p>
     <p style="text-align:center; margin-top:16px;"><a href="index.html">ログイン画面へ</a></p>
@@ -510,13 +510,15 @@ function switchTab(tab) {
 function renderQualifying() {
   const filtered = data.games.filter(g => g.phase === 'qualifying');
   const stats = calcStatsByTeam(filtered);
-  document.getElementById('qualifyingRanking').innerHTML = buildRankingTable(stats);
+  document.getElementById('qualifyingRanking').innerHTML =
+    buildRankingTable(stats, { borderRank: 4 });
 }
 
 function renderFinal() {
   const filtered = data.games.filter(g => g.phase === 'final');
   const stats = calcStatsByTeam(filtered);
-  document.getElementById('finalRanking').innerHTML = buildRankingTable(stats);
+  document.getElementById('finalRanking').innerHTML =
+    buildRankingTable(stats, { borderRank: 4, showBorderLine: false });
 }
 
 function calcStatsByTeam(games) {
@@ -544,28 +546,58 @@ function calcStatsByTeam(games) {
     .sort((a, b) => b.totalPoints - a.totalPoints);
 }
  
-function buildRankingTable(stats) {
+function buildRankingTable(stats, options = {}) {
   if (stats.length === 0) return '<div class="empty">対局データがありません</div>';
+
+  // 予選などでボーダー位置を指定された場合、その順位のポイントを基準にする
+  const borderRank = options.borderRank || null;
+  const borderPoint = (borderRank && stats[borderRank - 1])
+    ? stats[borderRank - 1].totalPoints
+    : null;
+  const showBorderDiff = borderPoint !== null;
+
   return `
     <table>
       <thead>
         <tr>
           <th>順位</th><th>チーム</th><th>対局数</th>
-          <th>合計ポイント</th><th>平均順位</th>
+          <th>合計ポイント</th>
+          <th>${showBorderDiff ? 'ボーダー差' : '平均順位'}</th>
           <th>1位</th><th>2位</th><th>3位</th><th>4位</th>
         </tr>
       </thead>
       <tbody>
-        ${stats.map((s, i) => `
-          <tr>
-            <td class="rank-${i+1 <= 3 ? i+1 : ''}">${i+1}</td>
-            <td style="text-align:left;padding-left:16px;font-weight:bold">${escapeHtml(s.team)}</td>
-            <td>${s.games}</td>
-            <td class="points-cell ${s.totalPoints >= 0 ? 'positive' : 'negative'}"><strong>${formatPoints(s.totalPoints)}</strong></td>
-            <td>${s.avgRank.toFixed(2)}</td>
-            <td>${s.ranks[0]}</td><td>${s.ranks[1]}</td><td>${s.ranks[2]}</td><td>${s.ranks[3]}</td>
-          </tr>
-        `).join('')}
+        ${stats.map((s, i) => {
+          const rank = i + 1;
+          const showLine = options.showBorderLine !== false; // 既定はtrue
+          const isBorder = borderRank && rank === borderRank && showLine;
+          const trStyle = isBorder ? ' style="border-bottom: 3px solid #e53e3e;"' : '';
+
+          let middleCell;
+          if (showBorderDiff) {
+            const diff = Math.round((s.totalPoints - borderPoint) * 10) / 10;
+            if (rank <= borderRank) {
+              // ボーダー以上は「+xx.x」表示
+              middleCell = `<td class="points-cell positive">${formatPoints(diff)}</td>`;
+            } else {
+              // ボーダー未満は「▲xx.x」表示
+              middleCell = `<td class="points-cell negative">${formatPoints(diff)}</td>`;
+            }
+          } else {
+            middleCell = `<td>${s.avgRank.toFixed(2)}</td>`;
+          }
+
+          return `
+            <tr${trStyle}>
+              <td class="rank-${rank <= 3 ? rank : ''}">${rank}</td>
+              <td style="text-align:left;padding-left:16px;font-weight:bold">${escapeHtml(s.team)}</td>
+              <td>${s.games}</td>
+              <td class="points-cell ${s.totalPoints >= 0 ? 'positive' : 'negative'}"><strong>${formatPoints(s.totalPoints)}</strong></td>
+              ${middleCell}
+              <td>${s.ranks[0]}</td><td>${s.ranks[1]}</td><td>${s.ranks[2]}</td><td>${s.ranks[3]}</td>
+            </tr>
+          `;
+        }).join('')}
       </tbody>
     </table>
   `;
