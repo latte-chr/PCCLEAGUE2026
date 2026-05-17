@@ -511,14 +511,14 @@ function renderQualifying() {
   const filtered = data.games.filter(g => g.phase === 'qualifying');
   const stats = calcStatsByTeam(filtered);
   document.getElementById('qualifyingRanking').innerHTML =
-    buildRankingTable(stats, { borderRank: 4 });
+    buildRankingTable(stats, { diffMode: 'border', borderRank: 4, borderLabel: '決勝進出ライン' });
 }
 
 function renderFinal() {
   const filtered = data.games.filter(g => g.phase === 'final');
   const stats = calcStatsByTeam(filtered);
   document.getElementById('finalRanking').innerHTML =
-    buildRankingTable(stats, { borderRank: 4, showBorderLine: false });
+    buildRankingTable(stats, { diffMode: 'top' });
 }
 
 function calcStatsByTeam(games) {
@@ -549,12 +549,69 @@ function calcStatsByTeam(games) {
 function buildRankingTable(stats, options = {}) {
   if (stats.length === 0) return '<div class="empty">対局データがありません</div>';
 
-  // 予選などでボーダー位置を指定された場合、その順位のポイントを基準にする
+  const diffMode = options.diffMode || (options.borderRank ? 'border' : null);
   const borderRank = options.borderRank || null;
-  const borderPoint = (borderRank && stats[borderRank - 1])
-    ? stats[borderRank - 1].totalPoints
-    : null;
-  const showBorderDiff = borderPoint !== null;
+  const borderLabel = options.borderLabel || '決勝進出ライン';
+  const showBorderLine = options.showBorderLine !== false;
+
+  // 比較基準ポイント
+  let basePoint = null;
+  let middleHeader = '平均順位';
+  if (diffMode === 'border' && borderRank && stats[borderRank - 1]) {
+    basePoint = stats[borderRank - 1].totalPoints;
+    middleHeader = 'ボーダー差';
+  } else if (diffMode === 'top' && stats[0]) {
+    basePoint = stats[0].totalPoints;
+    middleHeader = 'トップ差';
+  }
+  const showDiff = basePoint !== null;
+
+  const rows = stats.map((s, i) => {
+    const rank = i + 1;
+    // 中央セル（平均順位 / ボーダー差 / トップ差）の生成部分
+let middleCell;
+if (diffMode === 'border' && showBorderDiff) {
+    const diff = Math.round((s.totalPoints - borderPoint) * 10) / 10;
+    middleCell = `<td class="points-cell ${rank <= borderRank ? 'positive' : 'negative'}">${formatPoints(diff)}</td>`;
+  } else if (diffMode === 'top') {
+    if (rank === 1) {
+      // 1位は「―」を表示
+      middleCell = `<td style="color:#a0aec0">―</td>`;
+    } else {
+      // トップ差は ▲ を付けず、絶対値で表示
+      const diff = Math.round((topPoint - s.totalPoints) * 10) / 10;
+      const diffStr = diff.toFixed(1);
+      middleCell = `<td class="points-cell negative">${diffStr}</td>`;
+    }
+  } else {
+    middleCell = `<td>${s.avgRank.toFixed(2)}</td>`;
+  }
+
+    const rowHtml = `
+      <tr>
+        <td class="rank-${rank <= 3 ? rank : ''}">${rank}</td>
+        <td style="text-align:left;padding-left:16px;font-weight:bold">${escapeHtml(s.team)}</td>
+        <td>${s.games}</td>
+        <td class="points-cell ${s.totalPoints >= 0 ? 'positive' : 'negative'}"><strong>${formatPoints(s.totalPoints)}</strong></td>
+        ${middleCell}
+        <td>${s.ranks[0]}</td><td>${s.ranks[1]}</td><td>${s.ranks[2]}</td><td>${s.ranks[3]}</td>
+      </tr>
+    `;
+
+    // ボーダーモードのときだけ「決勝進出ライン」を挿入
+    if (diffMode === 'border' && showBorderLine && borderRank && rank === borderRank && stats.length > borderRank) {
+      return rowHtml + `
+        <tr class="border-line-row">
+          <td colspan="9">
+            <div class="border-line">
+              <span class="border-line-text">▼ ${escapeHtml(borderLabel)} ▼</span>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+    return rowHtml;
+  }).join('');
 
   return `
     <table>
@@ -562,43 +619,11 @@ function buildRankingTable(stats, options = {}) {
         <tr>
           <th>順位</th><th>チーム</th><th>対局数</th>
           <th>合計ポイント</th>
-          <th>${showBorderDiff ? 'ボーダー差' : '平均順位'}</th>
+          <th>${middleHeader}</th>
           <th>1位</th><th>2位</th><th>3位</th><th>4位</th>
         </tr>
       </thead>
-      <tbody>
-        ${stats.map((s, i) => {
-          const rank = i + 1;
-          const showLine = options.showBorderLine !== false; // 既定はtrue
-          const isBorder = borderRank && rank === borderRank && showLine;
-          const trStyle = isBorder ? ' style="border-bottom: 3px solid #e53e3e;"' : '';
-
-          let middleCell;
-          if (showBorderDiff) {
-            const diff = Math.round((s.totalPoints - borderPoint) * 10) / 10;
-            if (rank <= borderRank) {
-              // ボーダー以上は「+xx.x」表示
-              middleCell = `<td class="points-cell positive">${formatPoints(diff)}</td>`;
-            } else {
-              // ボーダー未満は「▲xx.x」表示
-              middleCell = `<td class="points-cell negative">${formatPoints(diff)}</td>`;
-            }
-          } else {
-            middleCell = `<td>${s.avgRank.toFixed(2)}</td>`;
-          }
-
-          return `
-            <tr${trStyle}>
-              <td class="rank-${rank <= 3 ? rank : ''}">${rank}</td>
-              <td style="text-align:left;padding-left:16px;font-weight:bold">${escapeHtml(s.team)}</td>
-              <td>${s.games}</td>
-              <td class="points-cell ${s.totalPoints >= 0 ? 'positive' : 'negative'}"><strong>${formatPoints(s.totalPoints)}</strong></td>
-              ${middleCell}
-              <td>${s.ranks[0]}</td><td>${s.ranks[1]}</td><td>${s.ranks[2]}</td><td>${s.ranks[3]}</td>
-            </tr>
-          `;
-        }).join('')}
-      </tbody>
+      <tbody>${rows}</tbody>
     </table>
   `;
 }
