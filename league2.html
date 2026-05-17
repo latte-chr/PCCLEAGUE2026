@@ -148,6 +148,49 @@
     min-width: 100px;
   }
  
+　  /* ===== 決勝進出ライン用スタイル ===== */
+  .border-line-row td {
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+  }
+  .border-line-row:hover td {
+    background: transparent !important;
+  }
+  .border-line {
+    position: relative;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(90deg, transparent 0%, #fed7d7 15%, #feb2b2 50%, #fed7d7 85%, transparent 100%);
+    margin: 6px 0;
+  }
+  .border-line::before,
+  .border-line::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    height: 2px;
+    background: #e53e3e;
+    width: 28%;
+  }
+  .border-line::before { left: 0; }
+  .border-line::after { right: 0; }
+  .border-line-text {
+    position: relative;
+    background: #e53e3e;
+    color: #fff;
+    padding: 5px 18px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    box-shadow: 0 2px 6px rgba(229,62,62,0.4);
+    z-index: 1;
+    white-space: nowrap;
+  }
+ 
 </style>
 </head>
 <body>
@@ -568,24 +611,25 @@ function buildRankingTable(stats, options = {}) {
 
   const rows = stats.map((s, i) => {
     const rank = i + 1;
+
     // 中央セル（平均順位 / ボーダー差 / トップ差）の生成部分
-let middleCell;
-if (diffMode === 'border' && showBorderDiff) {
-    const diff = Math.round((s.totalPoints - borderPoint) * 10) / 10;
-    middleCell = `<td class="points-cell ${rank <= borderRank ? 'positive' : 'negative'}">${formatPoints(diff)}</td>`;
-  } else if (diffMode === 'top') {
-    if (rank === 1) {
-      // 1位は「―」を表示
-      middleCell = `<td style="color:#a0aec0">―</td>`;
+    let middleCell;
+    if (diffMode === 'border' && showDiff) {
+      const diff = Math.round((s.totalPoints - basePoint) * 10) / 10;
+      middleCell = `<td class="points-cell ${rank <= borderRank ? 'positive' : 'negative'}">${formatPoints(diff)}</td>`;
+    } else if (diffMode === 'top' && showDiff) {
+      if (rank === 1) {
+        // 1位は「―」を表示
+        middleCell = `<td style="color:#a0aec0">―</td>`;
+      } else {
+        // トップ差は ▲ を付けず、絶対値で表示
+        const diff = Math.round((basePoint - s.totalPoints) * 10) / 10;
+        const diffStr = diff.toFixed(1);
+        middleCell = `<td class="points-cell negative">${diffStr}</td>`;
+      }
     } else {
-      // トップ差は ▲ を付けず、絶対値で表示
-      const diff = Math.round((topPoint - s.totalPoints) * 10) / 10;
-      const diffStr = diff.toFixed(1);
-      middleCell = `<td class="points-cell negative">${diffStr}</td>`;
+      middleCell = `<td>${s.avgRank.toFixed(2)}</td>`;
     }
-  } else {
-    middleCell = `<td>${s.avgRank.toFixed(2)}</td>`;
-  }
 
     const rowHtml = `
       <tr>
