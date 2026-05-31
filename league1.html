@@ -573,7 +573,7 @@ function buildRankingTable(stats) {
           <th>名前</th>
           <th>対局数</th>
           <th>合計PT</th>
-          <th>平均着順</th>
+          <!-- <th>平均着順</th> -->
           <th>首位との差</th>
           <th>着順差</th>
           <th>1位</th><th>2位</th><th>3位</th><th>4位</th>
@@ -594,7 +594,7 @@ function buildRankingTable(stats) {
             <td class="points-cell ${s.totalPoints >= 0 ? 'positive' : 'negative'}">
               <strong>${formatPoints(s.totalPoints)}</strong>
             </td>
-            <td>${s.avgRank.toFixed(2)}</td>
+            <!-- <td>${s.avgRank.toFixed(2)}</td> -->
             <td class="points-cell gap-color">
               ${formatGap(gapFromTop)}
             </td>
