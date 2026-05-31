@@ -114,116 +114,131 @@
 </head>
 <body>
 
-<!--  -->
+<!-- ログイン画面 -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
     <h2>Chiinyan's LEAGUE 2026</h2>
-    <p style="text-align:center; color:#718096; margin-bottom:16px; font-size:13px;"></p>
+    <p style="text-align:center; color:#718096; margin-bottom:16px; font-size:13px;">パスワードを入力してください</p>
     <div class="row">
-      <input type="password" id="loginPassword" placeholder="" autocomplete="current-password">
-      <button onclick="tryLogin()" style="width:100%"></button>
+      <input type="password" id="loginPassword" placeholder="パスワード" autocomplete="current-password">
+      <button onclick="tryLogin()" style="width:100%">ログイン</button>
     </div>
     <div class="login-error" id="loginError"></div>
-    <p style="text-align:center; color:#a0aec0; font-size:11px; margin-top:16px;" id="loginStatus">...</p>
+    <p style="text-align:center; color:#a0aec0; font-size:11px; margin-top:16px;" id="loginStatus">接続中...</p>
   </div>
 </div>
 
 <div class="status-bar">
   <span>
-    <span class="sync-icon"></span>
-    <span id="syncStatus">...</span>
+    <span class="sync-icon">🀄</span>
+    <span id="syncStatus">同期待機中...</span>
     <span id="roleBadge"></span>
-    <span style="margin-left:12px"><a href="index.html" style="color:#fff; text-decoration:underline;"> </a></span>
+    <span style="margin-left:12px"><a href="index.html" style="color:#fff; text-decoration:underline;">← 戻る</a></span>
   </span>
-  <button onclick="logout()"></button>
+  <button onclick="logout()">ログアウト</button>
 </div>
 
 <div class="container" id="mainContainer" style="display:none">
-  <h1>Chiinyan's LEAGUE 2026</h1>
+  <h1>🀄 Chiinyan's LEAGUE 2026</h1>
 
-  <!--  -->
+  <!-- 管理者エリア -->
   <div id="adminArea" style="display:none">
     <div class="card">
-      <h2> <span class="badge" id="playerCount">0</span></h2>
+      <h2>👤 参加者管理 <span class="badge" id="playerCount">0</span></h2>
       <div class="row">
-        <input type="text" id="playerName" placeholder="" maxlength="20">
-        <button onclick="addPlayer()"></button>
+        <input type="text" id="playerName" placeholder="プレイヤー名" maxlength="20">
+        <button onclick="addPlayer()">追加</button>
       </div>
       <div id="playerList"></div>
     </div>
 
     <div class="card">
-      <h2></h2>
+      <h2>🎲 対局入力</h2>
       <div class="row">
-        <label>:</label>
+        <label>日付:</label>
         <input type="date" id="gameDate">
-        <label>:</label>
+        <label>卓:</label>
         <select id="gameTable" style="max-width:100px">
-          <option value="A">A</option>
-          <option value="B">B</option>
-          <option value="C">C</option>
+          <option value="A">A卓</option>
+          <option value="B">B卓</option>
+          <option value="C">C卓</option>
         </select>
-        <label>:</label>
+        <label>局:</label>
         <select id="gameRound" style="max-width:120px">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
+          <option value="1">第1局</option>
+          <option value="2">第2局</option>
+          <option value="3">第3局</option>
+          <option value="4">第4局</option>
+          <option value="5">第5局</option>
+          <option value="6">第6局</option>
+          <option value="7">第7局</option>
+          <option value="8">第8局</option>
         </select>
       </div>
       <div class="row">
-        <label>(1-2-3-4):</label>
+        <label>ウマ(1-2-3-4位):</label>
         <input type="text" id="umaConfig" value="30,10,-10,-30" style="max-width:140px">
-        <label>:</label>
+        <label>オカ:</label>
         <input type="number" id="okaConfig" value="20" style="max-width:80px">
-        <label>:</label>
+        <label>持ち点:</label>
         <input type="number" id="startPoint" value="25000" style="max-width:100px">
-        <label>:</label>
+        <label>返し点:</label>
         <input type="number" id="returnPoint" value="30000" style="max-width:100px">
       </div>
       <div class="game-inputs" id="gameInputs"></div>
       <div class="row">
-        <span class="hint"> 2 "00"  (: "321"  32100"250"  25000)</span>
+        <span class="hint">※ 点数は末尾2桁の "00" を省略できます (例: "321" → 32100、"250" → 25000)</span>
       </div>
       <div class="row">
-        <span class="hint"> : ( - )/1000 +  + (1)</span>
+        <span class="hint">※ ポイント計算式 : (素点 - 返し点)/1000 + ウマ + オカ(1位のみ)</span>
       </div>
       <div class="row">
-        <button onclick="addGame()"></button>
+        <button onclick="addGame()">対局を登録</button>
         <span id="scoreSum" style="color:#718096;font-size:13px;"></span>
       </div>
     </div>
   </div>
 
-  <!--  ( + ) -->
+  <!-- 順位表（総合 + 日付別） -->
   <div class="card">
-    <h2></h2>
+    <h2>🏆 順位表</h2>
     <div class="tabs">
-      <button class="tab active" id="tabTotal" onclick="switchTab('total')"></button>
-      <button class="tab" id="tabDaily" onclick="switchTab('daily')"></button>
+      <button class="tab active" id="tabTotal" onclick="switchTab('total')">総合</button>
+      <button class="tab" id="tabDaily" onclick="switchTab('daily')">日付別</button>
+      <!-- <button class="tab" id="tabPeriod" onclick="switchTab('period')">期間指定</button> -->
     </div>
     <div id="panelTotal"><div id="rankingTable"></div></div>
     <div id="panelDaily" style="display:none">
       <div class="filter-row">
         <div class="row">
-          <label>:</label>
+          <label>日付:</label>
           <select id="dailyDateSelect" onchange="renderDaily()">
-            <option value="all"></option>
+            <option value="all">すべての日付</option>
           </select>
         </div>
       </div>
       <div id="dailyRanking"></div>
     </div>
+    <!--
+    <div id="panelPeriod" style="display:none">
+      <div class="filter-row">
+        <div class="row">
+          <label>開始:</label>
+          <input type="date" id="periodFrom" onchange="renderPeriod()">
+          <label>終了:</label>
+          <input type="date" id="periodTo" onchange="renderPeriod()">
+          <button class="small secondary" onclick="clearPeriod()">クリア</button>
+        </div>
+      </div>
+      <div id="periodRanking"></div>
+    </div>
+    -->
   </div>
 
   <div class="card">
-    <h2> <span class="badge" id="gameCount">0</span></h2>
+    <h2>📋 対局履歴 <span class="badge" id="gameCount">0</span></h2>
     <div class="toolbar" id="historyToolbar">
-      <button class="small" onclick="exportData()"></button>
+      <button class="small" onclick="exportData()">データ出力</button>
     </div>
     <div id="gameHistory"></div>
   </div>
@@ -234,7 +249,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
 
 <script>
-// ================ Firebase ================
+// ================ Firebase設定 ================
 const firebaseConfig = {
   apiKey: "AIzaSyAkA7H9orEAPxeR5kUvdRWeN1R_fXWyslE",
   authDomain: "chiinyan-sleague2026.firebaseapp.com",
@@ -251,6 +266,7 @@ const db = firebase.firestore();
 
 let data = { players: [], games: [] };
 let currentTab = 'total';
+// 複合ソート: { key: 'date'|'table'|'round', dir: 'asc'|'desc' }
 let historySortKeys = [
   { key: 'date', dir: 'desc' },
   { key: 'table', dir: 'asc' },
@@ -258,7 +274,7 @@ let historySortKeys = [
 ];
 let unsubscribeGames = null;
 let unsubscribePlayers = null;
-let currentRole = null;
+let currentRole = null; // 'admin' or 'viewer'
 
 async function init() {
   document.getElementById('gameDate').valueAsDate = new Date();
@@ -267,9 +283,10 @@ async function init() {
   });
 
   try {
-    document.getElementById('loginStatus').textContent = '...';
+    document.getElementById('loginStatus').textContent = '接続中...';
     await auth.signInAnonymously();
 
+    // セッション復元: index.htmlからの遷移を想定
     const uid = auth.currentUser.uid;
     const memberDoc = await db.collection('members').doc(uid).get();
     const savedRole = localStorage.getItem('mahjongRole');
@@ -277,11 +294,12 @@ async function init() {
       currentRole = memberDoc.data().role || savedRole;
       enterApp();
     } else {
+      // 未ログインならトップへ
       location.href = 'index.html';
     }
   } catch (err) {
     console.error(err);
-    document.getElementById('loginStatus').textContent = ': ' + err.message;
+    document.getElementById('loginStatus').textContent = 'エラー: ' + err.message;
   }
 }
 
@@ -289,12 +307,12 @@ async function tryLogin() {
   const errEl = document.getElementById('loginError');
   errEl.textContent = '';
   const pw = document.getElementById('loginPassword').value.trim();
-  if (!pw) { errEl.textContent = ''; return; }
+  if (!pw) { errEl.textContent = 'パスワードを入力してください'; return; }
 
   try {
     const configDoc = await db.collection('config').doc('app').get();
     if (!configDoc.exists) {
-      errEl.textContent = '';
+      errEl.textContent = '設定が見つかりません';
       return;
     }
     const cfg = configDoc.data();
@@ -303,7 +321,7 @@ async function tryLogin() {
     else if (cfg.viewerPassword && pw === cfg.viewerPassword) role = 'viewer';
 
     if (!role) {
-      errEl.textContent = '';
+      errEl.textContent = 'パスワードが違います';
       return;
     }
 
@@ -317,7 +335,7 @@ async function tryLogin() {
     enterApp();
   } catch (err) {
     console.error(err);
-    errEl.textContent = ': ' + err.message;
+    errEl.textContent = 'エラー: ' + err.message;
   }
 }
 
@@ -325,16 +343,17 @@ function enterApp() {
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('mainContainer').style.display = 'block';
 
+  // ロール別UI切替
   const adminArea = document.getElementById('adminArea');
   const roleBadge = document.getElementById('roleBadge');
   const historyToolbar = document.getElementById('historyToolbar');
   if (currentRole === 'admin') {
     adminArea.style.display = 'block';
-    roleBadge.innerHTML = '<span class="role-badge role-admin"></span>';
+    roleBadge.innerHTML = '<span class="role-badge role-admin">管理者</span>';
     historyToolbar.style.display = 'flex';
   } else {
     adminArea.style.display = 'none';
-    roleBadge.innerHTML = '<span class="role-badge role-viewer"></span>';
+    roleBadge.innerHTML = '<span class="role-badge role-viewer">閲覧者</span>';
     historyToolbar.style.display = 'none';
   }
 
@@ -342,7 +361,7 @@ function enterApp() {
 }
 
 function logout() {
-  if (!confirm('')) return;
+  if (!confirm('ログアウトしますか？')) return;
   localStorage.removeItem('mahjongRole');
   if (unsubscribeGames) unsubscribeGames();
   if (unsubscribePlayers) unsubscribePlayers();
@@ -350,7 +369,7 @@ function logout() {
 }
 
 function startSync() {
-  document.getElementById('syncStatus').textContent = '...';
+  document.getElementById('syncStatus').textContent = '同期中...';
 
   unsubscribePlayers = db.collection('league1_players').orderBy('createdAt', 'asc')
     .onSnapshot(snapshot => {
@@ -358,16 +377,16 @@ function startSync() {
       render();
     }, err => {
       console.error('players sync error', err);
-      document.getElementById('syncStatus').textContent = '';
+      document.getElementById('syncStatus').textContent = '同期エラー';
     });
 
   unsubscribeGames = db.collection('league1_games').onSnapshot(snapshot => {
     data.games = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    document.getElementById('syncStatus').textContent = ` (: ${new Date().toLocaleTimeString()})`;
+    document.getElementById('syncStatus').textContent = `同期済み (最終更新: ${new Date().toLocaleTimeString()})`;
     render();
   }, err => {
     console.error('games sync error', err);
-    document.getElementById('syncStatus').textContent = '';
+    document.getElementById('syncStatus').textContent = '同期エラー';
   });
 }
 
@@ -383,33 +402,33 @@ function formatPoints(p) {
   const abs = Math.abs(rounded);
   const numStr = abs.toFixed(1);
   let sign = '';
-  if (rounded < 0) sign = '';
+  if (rounded < 0) sign = '-';
   return `<span class="pt-sign">${sign}</span><span class="pt-num">${numStr}</span>`;
 }
 
 // =====================================================
-// 差分表示用フォーマット関数（符号付き、gap-colorクラス使用）
+// 差分表示用フォーマット関数（符号なし、gap-colorクラス使用）
+// 首位(差=0)は「－」記号、それ以外は数値のみ表示
 // =====================================================
 function formatGap(p) {
   const rounded = Math.round(p * 10) / 10;
   const abs = Math.abs(rounded);
   const numStr = abs.toFixed(1);
-  // 首位(0.0)はハイフン、それ以外は「-XX.X」形式
   if (rounded === 0) {
     return `<span class="pt-sign"> </span><span class="pt-num">－</span>`;
   }
-  // 首位との差・着順差は必ず0以下になるため「-」符号を付与
-  return `<span class="pt-sign">-</span><span class="pt-num">${numStr}</span>`;
+  // 符号なしで数値のみ表示
+  return `<span class="pt-sign"> </span><span class="pt-num">${numStr}</span>`;
 }
 
 function formatScore(s) { return s.toLocaleString('en-US'); }
 
 async function addPlayer() {
-  if (currentRole !== 'admin') return alert('');
+  if (currentRole !== 'admin') return alert('管理者のみ操作できます');
   const input = document.getElementById('playerName');
   const name = input.value.trim();
-  if (!name) return alert('');
-  if (data.players.includes(name)) return alert('');
+  if (!name) return alert('名前を入力してください');
+  if (data.players.includes(name)) return alert('同じ名前のプレイヤーが既に存在します');
   try {
     await db.collection('league1_players').add({
       name,
@@ -417,15 +436,15 @@ async function addPlayer() {
     });
     input.value = '';
   } catch (err) {
-    alert(': ' + err.message);
+    alert('エラー: ' + err.message);
   }
 }
 
 async function removePlayer(name) {
-  if (currentRole !== 'admin') return alert('');
+  if (currentRole !== 'admin') return alert('管理者のみ操作できます');
   const used = data.games.some(g => g.results.some(r => r.player === name));
   if (used) {
-    if (!confirm(`${name}()`)) return;
+    if (!confirm(`${name} は対局履歴に存在します。削除しますか？(対局データは残ります)`)) return;
   }
   try {
     const snapshot = await db.collection('league1_players').where('name', '==', name).get();
@@ -433,19 +452,19 @@ async function removePlayer(name) {
     snapshot.docs.forEach(d => batch.delete(d.ref));
     await batch.commit();
   } catch (err) {
-    alert(': ' + err.message);
+    alert('エラー: ' + err.message);
   }
 }
 
 async function addGame() {
-  if (currentRole !== 'admin') return alert('');
+  if (currentRole !== 'admin') return alert('管理者のみ操作できます');
   const date = document.getElementById('gameDate').value;
-  if (!date) return alert('');
+  if (!date) return alert('日付を選択してください');
   const tableName = document.getElementById('gameTable').value;
   const round = parseInt(document.getElementById('gameRound').value);
 
   const umaParts = document.getElementById('umaConfig').value.split(',').map(s => parseFloat(s.trim()));
-  if (umaParts.length !== 4 || umaParts.some(isNaN)) return alert(' "30,10,-10,-30" ');
+  if (umaParts.length !== 4 || umaParts.some(isNaN)) return alert('ウマは "30,10,-10,-30" 形式で入力してください');
   const oka = parseFloat(document.getElementById('okaConfig').value) || 0;
   const startPoint = parseInt(document.getElementById('startPoint').value) || 25000;
   const returnPoint = parseInt(document.getElementById('returnPoint').value) || startPoint;
@@ -454,20 +473,20 @@ async function addGame() {
   for (let i = 0; i < 4; i++) {
     const player = document.getElementById(`gp_${i}`).value;
     const score = normalizeScore(document.getElementById(`gs_${i}`).value);
-    if (!player) return alert(`${i+1}`);
-    if (isNaN(score)) return alert(`${i+1}`);
-    if (results.some(r => r.player === player)) return alert('');
+    if (!player) return alert(`${i+1}位のプレイヤーを選択してください`);
+    if (isNaN(score)) return alert(`${i+1}位の点数を入力してください`);
+    if (results.some(r => r.player === player)) return alert('同じプレイヤーが重複しています');
     results.push({ player, score });
   }
 
   const sum = results.reduce((a, r) => a + r.score, 0);
   if (sum !== startPoint * 4) {
-    if (!confirm(` ${sum}  ${startPoint*4} `)) return;
+    if (!confirm(`合計点数 ${sum} が規定値 ${startPoint*4} と一致しません。続行しますか？`)) return;
   }
 
   const dup = data.games.find(g => g.date === date && g.table === tableName && g.round === round);
   if (dup) {
-    if (!confirm(`${date} ${tableName} ${round} `)) return;
+    if (!confirm(`${date} ${tableName}卓 第${round}局 は既に登録されています。上書き登録しますか？`)) return;
   }
 
   const sorted = [...results].map((r, i) => ({...r, originalIdx: i})).sort((a, b) => b.score - a.score);
@@ -488,17 +507,17 @@ async function addGame() {
     const roundSel = document.getElementById('gameRound');
     if (round < 8) roundSel.value = String(round + 1);
   } catch (err) {
-    alert(': ' + err.message);
+    alert('エラー: ' + err.message);
   }
 }
 
 async function removeGame(id) {
-  if (currentRole !== 'admin') return alert('');
-  if (!confirm('')) return;
+  if (currentRole !== 'admin') return alert('管理者のみ操作できます');
+  if (!confirm('この対局を削除しますか？')) return;
   try {
     await db.collection('league1_games').doc(id).delete();
   } catch (err) {
-    alert(': ' + err.message);
+    alert('エラー: ' + err.message);
   }
 }
 
@@ -541,7 +560,7 @@ function calcStats(games) {
 // buildRankingTable: 首位との差・着順差カラムを追加
 // =====================================================
 function buildRankingTable(stats) {
-  if (stats.length === 0) return '<div class="empty"></div>';
+  if (stats.length === 0) return '<div class="empty">対局データがありません</div>';
 
   // stats は totalPoints 降順でソート済み
   const topPoints = stats[0].totalPoints;
@@ -550,14 +569,14 @@ function buildRankingTable(stats) {
     <table>
       <thead>
         <tr>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
-          <th></th>
+          <th>順位</th>
+          <th>名前</th>
+          <th>対局数</th>
+          <th>合計PT</th>
+          <th>平均着順</th>
           <th>首位との差</th>
           <th>着順差</th>
-          <th>1</th><th>2</th><th>3</th><th>4</th>
+          <th>1位</th><th>2位</th><th>3位</th><th>4位</th>
         </tr>
       </thead>
       <tbody>
@@ -577,10 +596,7 @@ function buildRankingTable(stats) {
             </td>
             <td>${s.avgRank.toFixed(2)}</td>
             <td class="points-cell gap-color">
-              ${i === 0
-                ? `<span class="pt-sign"> </span><span class="pt-num">－</span>`
-                : formatGap(gapFromTop)
-              }
+              ${formatGap(gapFromTop)}
             </td>
             <td class="points-cell gap-color">
               ${i === 0
@@ -607,7 +623,7 @@ function renderDaily() {
   const dates = [...new Set(data.games.map(g => g.date))].sort((a, b) => b.localeCompare(a));
   const select = document.getElementById('dailyDateSelect');
   const prev = select.value || 'all';
-  select.innerHTML = '<option value="all"></option>' +
+  select.innerHTML = '<option value="all">すべての日付</option>' +
     dates.map(d => `<option value="${d}">${d}</option>`).join('');
   if (dates.includes(prev) || prev === 'all') {
     select.value = prev;
@@ -617,7 +633,7 @@ function renderDaily() {
 
   const target = document.getElementById('dailyRanking');
   if (data.games.length === 0) {
-    target.innerHTML = '<div class="empty"></div>';
+    target.innerHTML = '<div class="empty">対局データがありません</div>';
     return;
   }
 
@@ -627,7 +643,7 @@ function renderDaily() {
     const dayGames = data.games.filter(g => g.date === date);
     return `
       <div class="daily-section">
-        <div class="daily-date"> ${date} <span class="badge">${dayGames.length}</span></div>
+        <div class="daily-date">📅 ${date} <span class="badge">${dayGames.length}対局</span></div>
         ${buildRankingTable(calcStats(dayGames))}
       </div>
     `;
@@ -641,8 +657,8 @@ function renderPeriod() {
   if (from) games = games.filter(g => g.date >= from);
   if (to) games = games.filter(g => g.date <= to);
   let header = (from || to)
-    ? `<h3>${from || ''}  ${to || ''}  <span class="badge">${games.length}</span></h3>`
-    : `<h3> <span class="badge">${games.length}</span></h3>`;
+    ? `<h3>${from || '開始'}〜${to || '終了'} <span class="badge">${games.length}対局</span></h3>`
+    : `<h3>全期間 <span class="badge">${games.length}対局</span></h3>`;
   const el = document.getElementById('periodRanking');
   if (el) el.innerHTML = header + buildRankingTable(calcStats(games));
 }
@@ -655,6 +671,10 @@ function clearPeriod() {
   renderPeriod();
 }
 
+// ソート処理:
+// - 既に最優先キーなら方向トグル
+// - 他のキーなら最優先に昇格（方向は維持）
+// - 存在しないキーなら先頭に追加（デフォルト方向）
 function sortHistory(key) {
   const idx = historySortKeys.findIndex(s => s.key === key);
   if (idx === 0) {
@@ -671,8 +691,9 @@ function sortHistory(key) {
 
 function renderHistory() {
   const gh = document.getElementById('gameHistory');
-  if (data.games.length === 0) { gh.innerHTML = '<div class="empty"></div>'; return; }
+  if (data.games.length === 0) { gh.innerHTML = '<div class="empty">対局データがありません</div>'; return; }
 
+  // 複合ソート: キー順に比較
   const sorted = [...data.games].sort((a, b) => {
     for (const s of historySortKeys) {
       let av, bv;
@@ -685,6 +706,7 @@ function renderHistory() {
     return 0;
   });
 
+  // ソートアイコン生成
   const sortInfo = (key) => {
     const idx = historySortKeys.findIndex(s => s.key === key);
     if (idx < 0) return { active: false, dir: null, order: null };
@@ -692,8 +714,9 @@ function renderHistory() {
   };
   const arrow = (key) => {
     const info = sortInfo(key);
-    if (!info.active) return '<span class="sort-icon"></span>';
-    const dirArrow = info.dir === 'asc' ? '' : '';
+    if (!info.active) return '<span class="sort-icon">⇅</span>';
+    const dirArrow = info.dir === 'asc' ? '▲' : '▼';
+    // 優先順位を2桁目に表示
     const orderLabel = historySortKeys.length > 1 ? `<sub style="font-size:9px">${info.order}</sub>` : '';
     return `<span class="sort-icon">${dirArrow}${orderLabel}</span>`;
   };
@@ -702,24 +725,24 @@ function renderHistory() {
 
   gh.innerHTML = `
     <div class="row" style="font-size:12px; color:#718096; margin-bottom:8px;">
-      ()
-      <button class="small secondary" onclick="resetHistorySort()"></button>
+      ヘッダーをクリックでソート(複合ソート対応)
+      <button class="small secondary" onclick="resetHistorySort()">リセット</button>
     </div>
     <table>
       <thead>
         <tr>
-          <th class="${ac('date')}" onclick="sortHistory('date')">${arrow('date')}</th>
-          <th class="${ac('table')}" onclick="sortHistory('table')">${arrow('table')}</th>
-          <th class="${ac('round')}" onclick="sortHistory('round')">${arrow('round')}</th>
-          <th>1</th><th>2</th><th>3</th><th>4</th>
-          ${showDelete ? '<th></th>' : ''}
+          <th class="${ac('date')}" onclick="sortHistory('date')">日付${arrow('date')}</th>
+          <th class="${ac('table')}" onclick="sortHistory('table')">卓${arrow('table')}</th>
+          <th class="${ac('round')}" onclick="sortHistory('round')">局${arrow('round')}</th>
+          <th>1位</th><th>2位</th><th>3位</th><th>4位</th>
+          ${showDelete ? '<th>操作</th>' : ''}
         </tr>
       </thead>
       <tbody>
         ${sorted.map(g => {
           const byRank = [...g.results].sort((a, b) => a.rank - b.rank);
-          const tableLabel = g.table ? `<span class="table-tag">${escapeHtml(g.table)}</span>` : '-';
-          const roundLabel = g.round ? `<span class="round-tag">${g.round}</span>` : '-';
+          const tableLabel = g.table ? `<span class="table-tag">${escapeHtml(g.table)}卓</span>` : '-';
+          const roundLabel = g.round ? `<span class="round-tag">第${g.round}局</span>` : '-';
           return `<tr>
             <td>${g.date}</td><td>${tableLabel}</td><td>${roundLabel}</td>
             ${byRank.map(r => `
@@ -728,7 +751,7 @@ function renderHistory() {
                 <span class="score-line">${formatScore(r.score)}</span>
                 <span class="points-line ${r.points >= 0 ? 'positive' : 'negative'}"><strong>${formatPoints(r.points)}</strong></span>
               </td>`).join('')}
-            ${showDelete ? `<td><button class="small danger" onclick="removeGame('${g.id}')"></button></td>` : ''}
+            ${showDelete ? `<td><button class="small danger" onclick="removeGame('${g.id}')">削除</button></td>` : ''}
           </tr>`;
         }).join('')}
       </tbody>
@@ -746,16 +769,17 @@ function resetHistorySort() {
 }
 
 function render() {
-  document.getElementById('playerCount').textContent = data.players.length + '';
-  document.getElementById('gameCount').textContent = data.games.length + '';
+  document.getElementById('playerCount').textContent = data.players.length + '人';
+  document.getElementById('gameCount').textContent = data.games.length + '局';
 
+  // 管理者UIのみ更新
   if (currentRole === 'admin') {
     const pl = document.getElementById('playerList');
     if (data.players.length === 0) {
-      pl.innerHTML = '<div class="empty"></div>';
+      pl.innerHTML = '<div class="empty">プレイヤーが登録されていません</div>';
     } else {
       pl.innerHTML = '<div class="row" style="margin-top:10px">' +
-        data.players.map(p => `<span style="background:#ebf4ff;padding:6px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px">${escapeHtml(p)}<button class="small danger" onclick="removePlayer('${escapeJs(p)}')"></button></span>`).join('') +
+        data.players.map(p => `<span style="background:#ebf4ff;padding:6px 12px;border-radius:20px;display:inline-flex;align-items:center;gap:6px">${escapeHtml(p)}<button class="small danger" onclick="removePlayer('${escapeJs(p)}')">×</button></span>`).join('') +
         '</div>';
     }
     const gi = document.getElementById('gameInputs');
@@ -763,12 +787,12 @@ function render() {
     for (let i = 0; i < 4; i++) {
       const div = document.createElement('div');
       div.innerHTML = `
-        <label>${i+1}</label>
+        <label>${i+1}位</label>
         <select id="gp_${i}">
           <option value="">----</option>
           ${data.players.map(p => `<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('')}
         </select>
-        <input type="number" id="gs_${i}" placeholder=": 321 or 32100" oninput="updateSum()">
+        <input type="number" id="gs_${i}" placeholder="点数: 321 or 32100" oninput="updateSum()">
       `;
       gi.appendChild(div);
     }
@@ -790,7 +814,7 @@ function updateSum() {
   const target = start * 4;
   const sumEl = document.getElementById('scoreSum');
   if (sumEl) {
-    sumEl.textContent = count > 0 ? `: ${sum.toLocaleString()} / ${target.toLocaleString()} ${sum === target ? '' : (count === 4 ? ' ' : '')}` : '';
+    sumEl.textContent = count > 0 ? `合計: ${sum.toLocaleString()} / ${target.toLocaleString()} ${sum === target ? '✓' : (count === 4 ? '⚠ 不一致' : '')}` : '';
   }
 }
 
