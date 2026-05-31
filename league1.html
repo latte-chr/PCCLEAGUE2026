@@ -402,7 +402,7 @@ function formatPoints(p) {
   const abs = Math.abs(rounded);
   const numStr = abs.toFixed(1);
   let sign = '';
-  if (rounded < 0) sign = '-';
+  if (rounded < 0) sign = '▲';
   return `<span class="pt-sign">${sign}</span><span class="pt-num">${numStr}</span>`;
 }
 
@@ -572,7 +572,7 @@ function buildRankingTable(stats) {
           <th>順位</th>
           <th>名前</th>
           <th>対局数</th>
-          <th>合計PT</th>
+          <th>合計</th>
           <!-- <th>平均着順</th> -->
           <th>首位との差</th>
           <th>着順差</th>
